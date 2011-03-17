@@ -28,9 +28,15 @@ class Ledger::Converter {
   our $VERSION = '0.01';
 
   use Try::Tiny;
+  use MooseX::Types::Path::Class;
   
   has ['account', 'format'] => ( is => 'ro', isa => 'Str', required => 1 );
   has '_converter' => ( is => 'ro', lazy_build => 1 );
+  has 'input_file' => ( 
+    is => 'ro', 
+    isa => 'Path::Class::File', 
+    required => 1,
+    coerce => 1);
 
   method _build__converter {
     my $base = __PACKAGE__ . '::Format';
@@ -38,7 +44,7 @@ class Ledger::Converter {
     return try {
       my $class = $base . '::' . $self->format;
       Class::MOP::load_class($class);
-      return $class->new;
+      return $class->new(input_file => $self->input_file);
     }
     catch {
       if ($_ =~ m/^Can't locate /)

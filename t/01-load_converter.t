@@ -13,6 +13,7 @@ lives_ok {
   $test_converter = Ledger::Converter->new(
     account => 'test', 
     format => 'Commonwealth',
+    input_file => '/tmp/file',
   )
 }  'Converter creates ok';
 
@@ -30,6 +31,7 @@ lives_ok {
   $test_converter = Ledger::Converter->new(
     account => 'test', 
     format => 'Commonwealth2',
+    input_file => '/tmp/file',
   )
 }  'Converter with wrong format creates ok';
 

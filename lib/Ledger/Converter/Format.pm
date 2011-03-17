@@ -1,9 +1,8 @@
 use MooseX::Declare;
 
-=head1 NAME
+=head1 Name
 
-Ledger::Converter::Format::Commonwealth - Formatter that understands
-commonwealth bank csv's
+Ledger::Converter::Format - Role defining what a formatter should do
 
 =head1 VERSION
 
@@ -11,12 +10,18 @@ Version 0.01
 
 =cut
 
-class Ledger::Converter::Format::Commonwealth with Ledger::Converter::Format {
+role Ledger::Converter::Format {
   our $VERSION = '0.01';
 
-  method convert {
-    return;
-  }
+  use MooseX::Types::Path::Class;
+
+  has 'input_file' => (
+    is => 'ro', 
+    isa => 'Path::Class::File', 
+    required => 1,
+    coerce => 1);
+
+  requires 'convert';
 }
 
 __END__
