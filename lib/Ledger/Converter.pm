@@ -1,7 +1,4 @@
-package Ledger::Converter;
-
-use warnings;
-use strict;
+use MooseX::Declare;
 
 =head1 NAME
 
@@ -12,8 +9,6 @@ Ledger::Converter - The great new Ledger::Converter!
 Version 0.01
 
 =cut
-
-our $VERSION = '0.01';
 
 
 =head1 SYNOPSIS
@@ -27,26 +22,38 @@ Perhaps a little code snippet.
     my $foo = Ledger::Converter->new();
     ...
 
-=head1 EXPORT
-
-A list of functions that can be exported.  You can delete this section
-if you don't export anything, such as for a purely object-oriented module.
-
-=head1 SUBROUTINES/METHODS
-
-=head2 function1
-
 =cut
 
-sub function1 {
+class Ledger::Converter {
+  our $VERSION = '0.01';
+
+  use Try::Tiny;
+  
+  has ['account', 'format'] => ( is => 'ro', isa => 'Str', required => 1 );
+  has '_converter' => ( is => 'ro', lazy_build => 1 );
+
+  method _build__converter {
+    my $base = __PACKAGE__ . '::Format';
+
+    return try {
+      my $class = $base . '::' . $self->format;
+      Class::MOP::load_class($class);
+      return $class->new;
+    }
+    catch {
+      if ($_ =~ m/^Can't locate /)
+      {
+        die 'Format ' . $self->format . ' is not available to the converter';
+      }
+      else
+      {
+        die $_;
+      }
+    }
+  }
 }
 
-=head2 function2
-
-=cut
-
-sub function2 {
-}
+__END__
 
 =head1 AUTHOR
 
@@ -68,29 +75,6 @@ You can find documentation for this module with the perldoc command.
     perldoc Ledger::Converter
 
 
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Ledger-Converter>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Ledger-Converter>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Ledger-Converter>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Ledger-Converter/>
-
-=back
-
-
 =head1 ACKNOWLEDGEMENTS
 
 
@@ -106,5 +90,3 @@ See http://dev.perl.org/licenses/ for more information.
 
 
 =cut
-
-1; # End of Ledger::Converter
