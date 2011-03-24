@@ -7,6 +7,14 @@ license  'perl';
 
 build_requires 'Test::More';
 
+requires 'MooseX::Declare';
+requires 'Try::Tiny';
+requires 'MooseX::Types::Path::Class';
+requires 'Class::MOP';
+requires 'Text::CSV';
+requires 'DBIx::Class';
+requires 'autodie';
+
 auto_install;
 
 WriteAll;
